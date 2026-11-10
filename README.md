@@ -8,11 +8,13 @@ Todo está en `index.html` (HTML + CSS + JS, sin dependencias ni build). Solo ca
 
 Buscá en `index.html` los comentarios `REEMPLAZAR`, `CONFIRMAR` y `ACLARAR`.
 
-Los archivos van en estas rutas, al lado de `index.html`. Mientras no existan, se ve un placeholder en B/N. Las fotos y los videos se pasan a blanco y negro por CSS, así que podés subirlos en color.
+Los archivos van en estas rutas, al lado de `index.html`. Las fotos y los videos se pasan a blanco y negro por CSS, así que podés subirlos en color.
+
+Mientras falte una foto, la web muestra una foto de stock de `img/placeholder/` (Unsplash, ver `img/placeholder/CREDITOS.md`) con el epígrafe "Imagen ilustrativa". Cuando subís la tuya con el nombre de la tabla, reemplaza sola a la de stock y la etiqueta desaparece. No hace falta tocar el HTML.
 
 | Archivo | Qué es |
 | --- | --- |
-| `video/hero-crea.mp4` | Video del hero, dentro de la píldora. MP4 H.264, 1920×1080, 6 a 12 s en loop, sin audio, menos de 4 MB |
+| `video/hero-crea.mp4` | Video del hero, dentro de la píldora. MP4 H.264, 1920×1080, 6 a 12 s en loop, sin audio, menos de 4 MB. Mientras no esté, la píldora muestra 5 fotos de stock que cambian con la palabra rotativa |
 | `img/hero-poster.jpg` | Primer cuadro de ese video |
 | `img/estudio-croma-verde.jpg` | Estudio con croma verde (horizontal, 1600×1000) |
 | `img/estudio-podcast.jpg` | Set de podcast (cuadrada, 1000×1000) |
@@ -22,7 +24,7 @@ Los archivos van en estas rutas, al lado de `index.html`. Mientras no existan, s
 | `img/fiebre-de-mundial.jpg` | Foto de Fiebre de Mundial con pantalla y tribuna (panorámica 21:9) |
 | `img/logo-vorterix-santa-rosa.svg` | Logo de Vorterix Santa Rosa en blanco |
 | `img/logo-fuera-de-fase.svg` | Logo de Fuera de Fase en blanco |
-| `img/og-crea.jpg` | Imagen para compartir en redes, 1200×630 |
+| `img/og-crea.jpg` | Imagen para compartir en redes, 1200×630. Ya hay una provisoria hecha con el hero, pero tiene una foto de stock en la píldora: reemplazala cuando estén las fotos reales |
 
 Además:
 

@@ -3,7 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+<script>
+document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+/* Fotos: si todavía no existe la foto definitiva, usa el placeholder de stock (data-ph)
+   y lo marca como "Imagen ilustrativa". Si tampoco carga, queda el fondo B/N de CSS. */
+window.phImg = function (img) {
+  var ph = img.getAttribute('data-ph');
+  if (ph && img.getAttribute('src') !== ph) {
+    img.setAttribute('src', ph);
+    if (img.getAttribute('data-ph-alt')) img.alt = img.getAttribute('data-ph-alt') + ' (imagen ilustrativa)';
+    var box = img.closest('figure');
+    if (box) box.classList.add('is-ph');
+  } else {
+    img.hidden = true;
+  }
+};
+</script>
 
 <title>CREA | Productora audiovisual y estudio en Santa Rosa, La Pampa</title>
 <meta name="description" content="Productora audiovisual en Santa Rosa, La Pampa. Alquiler de estudio por hora con croma, streaming en vivo, publicidad, pantallas LED y Starlink. Viajamos a todo el país.">
@@ -289,16 +304,26 @@ button{ font:inherit; color:inherit; }
 .pill-media{ position:absolute; top:0; left:50%; width:max(4.2em, 100%); height:100%; transform:translateX(-50%); }
 .pill-media video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center top; }
 .pill-line{ position:absolute; inset:0; background:var(--lime); opacity:0; }
+/* Placeholder del video: fotos que cambian con la palabra rotativa */
+.pill-slides img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; object-position:center 40%;
+  opacity:0; transition:opacity .2s linear;
+}
+.pill-slides img.is-on{ opacity:1; animation:kb 6s ease-out both; }
+@keyframes kb{ from{ transform:scale(1.09); } to{ transform:scale(1); } }
+.is-paused .pill-slides img, .hero-off .pill-slides img{ animation-play-state:paused; }
 .pill-rec{
   position:absolute; left:calc(var(--fs) * .2); top:50%; transform:translateY(-50%);
-  display:flex; align-items:center; gap:7px;
-  font:500 11px/1 var(--mono); letter-spacing:.14em; color:rgba(255,255,255,.85);
+  display:flex; align-items:center; gap:7px; padding:6px 9px 6px 8px; border-radius:999px;
+  font:500 11px/1 var(--mono); letter-spacing:.14em; color:rgba(255,255,255,.9);
+  background:rgba(0,0,0,.42);
 }
 .pill-rec i{ width:8px; height:8px; border-radius:50%; background:var(--lime); }
 .pill-ctrl{
   position:absolute; right:.16em; top:50%; transform:translateY(-50%);
   width:38px; height:38px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
-  background:rgba(0,0,0,.38); border:1px solid rgba(255,255,255,.35); color:#fff; opacity:.9;
+  background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.35); color:#fff; opacity:.9;
   transition:background-color .2s;
 }
 .pill-ctrl:hover{ background:rgba(0,0,0,.6); }
@@ -445,10 +470,12 @@ button{ font:inherit; color:inherit; }
 .shot--wide{ grid-column:span 2; aspect-ratio:16/10; }
 .shot img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 .cap{
-  position:absolute; left:12px; bottom:12px;
-  font:500 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase;
-  color:var(--paper); background:rgba(10,10,10,.72); padding:7px 9px; border-radius:3px;
+  position:absolute; left:12px; bottom:12px; margin-right:12px;
+  font:500 11px/1.3 var(--mono); letter-spacing:.12em; text-transform:uppercase;
+  color:var(--paper); background:rgba(10,10,10,.78); padding:6px 9px; border-radius:3px;
 }
+/* Mientras se ve una foto de stock, el epígrafe lo aclara */
+.is-ph .cap::after{ content:" · Imagen ilustrativa"; color:var(--fog); }
 
 /* =========================================================
    CASO: FIEBRE DE MUNDIAL
@@ -476,7 +503,11 @@ button{ font:inherit; color:inherit; }
 .ally img:not([hidden]) + span{ display:none; }
 .ally span{ font:500 13px/1.2 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:#CFCFCA; text-align:center; }
 
-.reel{ position:relative; aspect-ratio:9/16; max-width:360px; border-radius:16px; overflow:hidden; background:#1a1a1a; }
+.reel{ position:relative; margin:0; aspect-ratio:9/16; max-width:360px; border-radius:16px; overflow:hidden; background:#1a1a1a; }
+.reel img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.reel::before{ content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 40%); }
+.reel .reel-play, .reel .cap{ z-index:2; }
+.reel-play{ background:rgba(0,0,0,.35); }
 .reel-play{
   position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
   width:68px; height:68px; border-radius:50%; display:grid; place-items:center;
@@ -662,7 +693,7 @@ button{ font:inherit; color:inherit; }
    ========================================================= */
 @media (prefers-reduced-motion:reduce){
   html{ scroll-behavior:auto; }
-  .beam{ animation:none !important; }
+  .beam, .pill-slides img{ animation:none !important; }
   .js .rv{ opacity:1; transform:none; transition:none; }
   .js .ttl.rv .ttl-k{ clip-path:none; transition:none; }
   .meter i, .tile::after, .nav-main a::after, .nav-social a::after{ transition:none; }
@@ -736,10 +767,19 @@ button{ font:inherit; color:inherit; }
           <div class="pill-media">
             <!-- Placeholder animado (luces de escenario). Queda detrás del video y se ve solo si el video no carga. -->
             <div class="ph"><span class="beam beam--l"></span><span class="beam beam--r"></span></div>
+            <!-- Placeholder del video: fotos de stock (img/placeholder/) que cambian con la palabra rotativa.
+                 Solo se cargan si falta el video. Cuando subas video/hero-crea.mp4, el video las tapa. -->
+            <div class="pill-slides">
+              <img class="bw is-on" data-src="img/placeholder/hero-streaming.jpg" alt="">
+              <img class="bw" data-src="img/placeholder/hero-shows.jpg" alt="">
+              <img class="bw" data-src="img/placeholder/hero-publicidad.jpg" alt="">
+              <img class="bw" data-src="img/placeholder/hero-podcast.jpg" alt="">
+              <img class="bw" data-src="img/placeholder/hero-en-vivo.jpg" alt="">
+            </div>
             <!-- REEMPLAZAR: video B/N del estudio o de una transmisión. MP4 (H.264), 1920×1080, 6 a 12 s en loop, sin audio, menos de 4 MB → video/hero-crea.mp4
                  REEMPLAZAR: poster = primer cuadro del video en JPG → img/hero-poster.jpg -->
             <video class="hero-video bw" autoplay muted loop playsinline preload="metadata" poster="img/hero-poster.jpg">
-              <source src="video/hero-crea.mp4" type="video/mp4" onerror="this.parentNode.hidden=true">
+              <source src="video/hero-crea.mp4" type="video/mp4" onerror="this.parentNode.hidden=true; if (window.heroNoVideo) heroNoVideo();">
             </video>
           </div>
           <span class="pill-line"></span>
@@ -854,31 +894,36 @@ button{ font:inherit; color:inherit; }
       <figure class="shot shot--wide rv">
         <div class="ph" aria-hidden="true"><span class="beam beam--l"></span><span class="beam beam--r"></span><span class="vf"></span></div>
         <!-- REEMPLAZAR: foto B/N del estudio con el croma verde (1600×1000) → img/estudio-croma-verde.jpg -->
-        <img class="bw" src="img/estudio-croma-verde.jpg" alt="Estudio de CREA con el fondo de croma verde iluminado" loading="lazy" decoding="async" onerror="this.hidden=true">
+        <img class="bw" src="img/estudio-croma-verde.jpg" alt="Estudio de CREA con el fondo de croma verde iluminado" loading="lazy" decoding="async"
+             data-ph="img/placeholder/estudio-croma-verde.jpg" data-ph-alt="Camarógrafo filmando a una bailarina en un estudio con tubos de luz" onerror="phImg(this)">
         <figcaption class="cap">Croma verde</figcaption>
       </figure>
       <figure class="shot rv">
         <div class="ph" aria-hidden="true"><span class="beam beam--r"></span><span class="vf"></span></div>
         <!-- REEMPLAZAR: foto B/N del set de podcast (1000×1250) → img/estudio-podcast.jpg -->
-        <img class="bw" src="img/estudio-podcast.jpg" alt="Set de podcast con micrófonos y cámaras" loading="lazy" decoding="async" onerror="this.hidden=true">
+        <img class="bw" src="img/estudio-podcast.jpg" alt="Set de podcast con micrófonos y cámaras" loading="lazy" decoding="async"
+             data-ph="img/placeholder/estudio-podcast.jpg" data-ph-alt="Dos personas grabando un podcast con micrófonos y auriculares" onerror="phImg(this)">
         <figcaption class="cap">Set de podcast</figcaption>
       </figure>
       <figure class="shot rv" style="--d:.08s">
         <div class="ph" aria-hidden="true"><span class="beam beam--l"></span><span class="vf"></span></div>
         <!-- REEMPLAZAR: foto B/N del set de YouTube (1000×1250) → img/estudio-youtube.jpg -->
-        <img class="bw" src="img/estudio-youtube.jpg" alt="Set armado para grabar un programa de YouTube" loading="lazy" decoding="async" onerror="this.hidden=true">
+        <img class="bw" src="img/estudio-youtube.jpg" alt="Set armado para grabar un programa de YouTube" loading="lazy" decoding="async"
+             data-ph="img/placeholder/estudio-youtube.jpg" data-ph-alt="Set con una cámara en trípode frente a un escritorio con monitores" onerror="phImg(this)">
         <figcaption class="cap">Set de YouTube</figcaption>
       </figure>
       <figure class="shot rv">
         <div class="ph" aria-hidden="true"><span class="beam beam--l"></span><span class="vf"></span></div>
         <!-- REEMPLAZAR: foto B/N con el croma azul (1000×1250) → img/estudio-croma-azul.jpg -->
-        <img class="bw" src="img/estudio-croma-azul.jpg" alt="Estudio con el fondo de croma azul" loading="lazy" decoding="async" onerror="this.hidden=true">
+        <img class="bw" src="img/estudio-croma-azul.jpg" alt="Estudio con el fondo de croma azul" loading="lazy" decoding="async"
+             data-ph="img/placeholder/estudio-croma-azul.jpg" data-ph-alt="Estudio con fondo infinito y luces con softbox" onerror="phImg(this)">
         <figcaption class="cap">Croma azul</figcaption>
       </figure>
       <figure class="shot rv" style="--d:.08s">
         <div class="ph" aria-hidden="true"><span class="beam beam--r"></span><span class="vf"></span></div>
         <!-- REEMPLAZAR: foto B/N de una sesión de fotos o de producción (1000×1250) → img/estudio-fotos.jpg -->
-        <img class="bw" src="img/estudio-fotos.jpg" alt="Sesión de fotos en el estudio de CREA" loading="lazy" decoding="async" onerror="this.hidden=true">
+        <img class="bw" src="img/estudio-fotos.jpg" alt="Sesión de fotos en el estudio de CREA" loading="lazy" decoding="async"
+             data-ph="img/placeholder/estudio-fotos.jpg" data-ph-alt="Manos sosteniendo una cámara de fotos" onerror="phImg(this)">
         <figcaption class="cap">Fotografía</figcaption>
       </figure>
     </div>
@@ -900,7 +945,8 @@ button{ font:inherit; color:inherit; }
     <figure class="case-photo rv">
       <div class="ph" aria-hidden="true"><span class="beam beam--l"></span><span class="beam beam--r"></span><span class="vf"></span></div>
       <!-- REEMPLAZAR: foto B/N de Fiebre de Mundial con la pantalla gigante y la tribuna (2400×1030 o similar) → img/fiebre-de-mundial.jpg -->
-      <img class="bw" src="img/fiebre-de-mundial.jpg" alt="Fiebre de Mundial: pantalla gigante y tribuna con público durante la transmisión" loading="lazy" decoding="async" onerror="this.hidden=true">
+      <img class="bw" src="img/fiebre-de-mundial.jpg" alt="Fiebre de Mundial: pantalla gigante y tribuna con público durante la transmisión" loading="lazy" decoding="async"
+           data-ph="img/placeholder/fiebre-de-mundial.jpg" data-ph-alt="Público alentando en una tribuna" onerror="phImg(this)">
       <figcaption class="cap">Fiebre de Mundial · 2026</figcaption>
     </figure>
 
@@ -931,11 +977,13 @@ button{ font:inherit; color:inherit; }
       <div class="rv" style="--d:.1s">
         <!-- REEMPLAZAR: embed del reel de Instagram de Fiebre de Mundial.
              Pegá acá el código "Insertar" de Instagram (blockquote class="instagram-media" + script de embed.js) en lugar del bloque .reel -->
-        <div class="reel">
+        <figure class="reel is-ph">
           <div class="ph" aria-hidden="true"><span class="beam beam--l"></span><span class="vf"></span></div>
+          <!-- Placeholder de stock hasta pegar el embed del reel -->
+          <img class="bw" src="img/placeholder/reel-fiebre-de-mundial.jpg" alt="Cancha de fútbol iluminada de noche, vista desde arriba (imagen ilustrativa)" loading="lazy" decoding="async" onerror="this.hidden=true">
           <span class="reel-play" aria-hidden="true"><svg class="ic"><use href="#i-play"/></svg></span>
-          <span class="cap">Reel · Fiebre de Mundial</span>
-        </div>
+          <figcaption class="cap">Reel</figcaption>
+        </figure>
         <div class="reel-foot">
           <p>Mirá cómo fue.</p>
           <a class="link-arrow" href="https://www.instagram.com/crea_contenidos/" target="_blank" rel="noopener"><span>Ver en Instagram</span><svg class="ic" aria-hidden="true"><use href="#i-out"/></svg></a>
@@ -1355,6 +1403,20 @@ button{ font:inherit; color:inherit; }
   const video = $('.hero-video');
   let wi = 0, timer = null, paused = false, heroVisible = true, busy = false;
 
+  // Placeholder del video: si no hay video, la píldora muestra una foto por palabra.
+  const slides = $$('.pill-slides img');
+  let slidesOn = false;
+  function loadSlides() {
+    if (slidesOn) return;
+    slidesOn = true;
+    slides.forEach(img => { img.onerror = () => { img.hidden = true; }; img.src = img.dataset.src; });
+  }
+  function showSlide(i) {
+    if (slidesOn) slides.forEach((img, k) => img.classList.toggle('is-on', k === i));
+  }
+  window.heroNoVideo = loadSlides;
+  if (video && video.hidden) loadSlides();
+
   async function step() {
     if (busy) return;
     busy = true;
@@ -1364,12 +1426,14 @@ button{ font:inherit; color:inherit; }
         const out = word.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: 'forwards' });
         await out.finished;
         word.textContent = words[wi];
+        showSlide(wi);
         out.cancel();
         word.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280 });
       } else {
         const a = bar.animate([{ transform: 'scaleX(0)', transformOrigin: '0 50%' }, { transform: 'scaleX(1)', transformOrigin: '0 50%' }], { duration: 300, easing: E3, fill: 'forwards' });
         await a.finished;
         word.textContent = words[wi];
+        showSlide(wi);
         const b = bar.animate([{ transform: 'scaleX(1)', transformOrigin: '100% 50%' }, { transform: 'scaleX(0)', transformOrigin: '100% 50%' }], { duration: 360, easing: E3, fill: 'forwards' });
         a.cancel();
         await b.finished;
